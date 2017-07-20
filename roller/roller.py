@@ -7,6 +7,7 @@ class Roller:
 
 	def __init__(self, bot):
 		self.bot = bot
+		self.extraRollsEnabled = 1
 		self.roll_arr = []
 
 	# Dice rolling function
@@ -28,7 +29,7 @@ class Roller:
 			result.append(roll)
 
 		# roll extra
-		if extra_rolls > 0:
+		if self.extraRollsEnabled == 1 && extra_rolls > 0:
 			self.roll_dice(extra_rolls, dice, mod, result)
 		else:
 			self.roll_arr = result
@@ -117,7 +118,19 @@ class Roller:
 	async def last(self, ctx):
 		"""Shows last roll"""
 		await self.bot.say("Last roll:\n**[" + "]** **[".join(str(roll) for roll in self.roll_arr) + "]**")
-
+		
+	@commands.command(pass_context = True)
+	async def toggleExtraRolls(self, ctx, disable):
+		"""Toggles extra rolls option on or off"""
+		if is_number(disable) and (disable == 1 || disable == 0):
+			self.extraRollsEnabled = disable;
+			
+			if self.extraRollsEnabled == 1:
+				await self.bot.say("Extra rolls are now [on].")
+			else:
+				await self.bot.say("Extra rolls are now [off]")
+		else:
+			await self.bot.say("Not a valid input. Please enter 1 for [on] or 0 for [off]")
 
 def setup(bot):
 	bot.add_cog(Roller(bot))
